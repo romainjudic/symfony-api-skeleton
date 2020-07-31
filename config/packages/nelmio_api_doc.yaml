@@ -1,0 +1,9 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Symfony API Skeleton
+            description: Change this in <code>config/packages/nelmio_api_doc.yaml</code>.
+            version: 0.0.1
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

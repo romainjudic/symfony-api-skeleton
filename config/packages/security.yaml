@@ -1,0 +1,46 @@
+security:
+    encoders:
+        App\Entity\User:
+            algorithm: auto
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        main_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js|doc)/
+            security: false
+        # La doc n'a pas besoin d'être protégée par défaut
+        doc:
+            pattern: ^/doc
+            security: false
+        # Firewall pour l'authentification
+        auth:
+            pattern: ^/auth
+            stateless: true
+            anonymous: true
+            json_login:
+                username_path: email
+                password_path: password
+                check_path: auth_login
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        # Firewall principal
+        main:
+            anonymous: false
+            stateless: true
+            lazy: true
+            provider: main_user_provider
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # - { path: ^/auth, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
