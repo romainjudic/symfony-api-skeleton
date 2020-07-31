@@ -1,6 +1,14 @@
 {
+    "name": "romainjudic/symfony-api-skeleton",
     "type": "project",
     "license": "proprietary",
+    "authors": [
+        {
+            "name": "Romain Judic",
+            "email": "judic.romain@gmail.com",
+            "role": "Maintainer"
+        }
+    ],
     "require": {
         "php": "^7.2.5",
         "ext-ctype": "*",
