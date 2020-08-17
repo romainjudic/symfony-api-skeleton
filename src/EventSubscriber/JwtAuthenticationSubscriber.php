@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 /**
- * Ce subscriber permet de personnaliser le processus d'authentification JWT de Lexik.
+ * Subscriber for customizing the authentication process.
  */
 class JwtAuthenticationSubscriber implements EventSubscriberInterface
 {
@@ -32,22 +32,22 @@ class JwtAuthenticationSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * On personnalise les réponses retournées en cas d'erreur d'authentification.
+     * Customize responses returned when authentication fails.
      * @param AuthenticationFailureEvent $event
      */
     public function onAuthenticationFailure(AuthenticationFailureEvent $event)
     {
-        $message = 'Votre identifiant ou mot de passe est incorrect';
+        $message = 'Wrong login/password';
         if ($event instanceof JWTInvalidEvent) {
-            $message = 'Le token JWT est invalide';
+            $message = 'Invalid token';
         } elseif ($event instanceof JWTNotFoundEvent) {
-            $message = 'Le token JWT est introuvable';
+            $message = 'Token not found';
         } elseif ($event instanceof JWTExpiredEvent) {
-            $message = 'Le token JWT est expiré';
+            $message = 'The token is expired';
         }
 
-        // On ne passe pas par le listener d'exceptions car dans ce cas l'événement "kernel.exception" n'est pas levé
-        // On passe quand même par une exception personnalisée pour bénéficier du format
+        // We can not rely on the exception listener here because the "kernel.exceptions" is not thrown in that case.
+        // We still use an ApiException to make sure the correct format is respected.
         $exception = new AuthenticationException($message);
 
         $event->setResponse(new JsonResponse(
@@ -57,9 +57,9 @@ class JwtAuthenticationSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * On peut ajouter ici des infos sur l'utilisateur dans le payload.
+     * Add custom information about the user in the payload here.
      *
-     * Attention: ne pas mettre d'infos trop volumineuses car ce token est envoyé à chaque requête.
+     * Warning: do not put large data here because this token is sent in every request.
      *
      * @param JWTCreatedEvent $event
      */
@@ -67,19 +67,19 @@ class JwtAuthenticationSubscriber implements EventSubscriberInterface
     {
         $payload = $event->getData();
 
-        // Récupération de la liste complète des rôles
+        // Retrieve the full list of roles
         $payload['roles'] = $this->roleHierarchy->getReachableRoleNames($payload['roles']);
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            // Gestion des erreurs
+            // Error handling
             'lexik_jwt_authentication.on_authentication_failure' => 'onAuthenticationFailure',
             'lexik_jwt_authentication.on_jwt_invalid' => 'onAuthenticationFailure',
             'lexik_jwt_authentication.on_jwt_not_found' => 'onAuthenticationFailure',
             'lexik_jwt_authentication.on_jwt_expired' => 'onAuthenticationFailure',
-            // Ajout d'infos dans le payload du JWT
+            // Custom data in the JWT's payload
             'lexik_jwt_authentication.on_jwt_created' => 'customizeJWTPayload',
         ];
     }

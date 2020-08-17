@@ -7,19 +7,18 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 /**
- * Exception de base pour représenter une erreur API.
- * Permet ensuite de fournir une réponse détaillée qui suit un format simplifié de JSON:API.
+ * Base exception to represent an API error.
+ * Ensure the response has detailed information following a precise format (simplified JSON:API).
  *
- * Une telle erreur contient :
- * - "status" : le statut HTTP lié à l'erreur
- * - "type" : un type qui catégorise l'erreur
- * - "title" : description textuelle du type d'erreur (pas spécifique à CETTE erreur mais à ce type d'erreur)
- * - "detail" : si besoin description plus détaillée de cette occurence de l'erreur.
- *
- * D'autres champs peuvent s'ajouter au besoin
- * (exemple : un champs "errors" qui contient la liste des erreurs de validation).
- *
- * Les types et titres associés sont créés en tant que constantes dans cette classe pour centraliser leur localisation.
+ * Such an error contains:
+ * - "status": the HTTP status for that error
+ * - "type": a category that target this kind of errors globally
+ * - "title": a descriptive title for the type
+ * - "detail": optional detailed description of that specific instance of the error.
+ * 
+ * Other stuff can be added when needed. For example: an "error" field with a list of validation errors.
+ * 
+ * Types and titles are stored as constants in this class to keep them in ine place.
  */
 class ApiException extends HttpException
 {
@@ -29,15 +28,15 @@ class ApiException extends HttpException
     const TYPE_INVALID_REQUEST_FORMAT = 'invalid_request_format';
     const TYPE_AUTHENTICATION_FAILED = 'authentication_failed';
 
-    /** Map des titres associés aux différents types d'erreurs */
+    /** Map of the titles for every type of error */
     private static $titles = [
-        self::TYPE_ERROR => 'Une erreur est survenue',
-        self::TYPE_VALIDATION_ERROR => 'La validation a échoué',
-        self::TYPE_INVALID_REQUEST_FORMAT => 'Format de requête invalide',
-        self::TYPE_AUTHENTICATION_FAILED => "L'authentification a échoué",
+        self::TYPE_ERROR => 'An error occured',
+        self::TYPE_VALIDATION_ERROR => 'Validation failed',
+        self::TYPE_INVALID_REQUEST_FORMAT => 'Invalid request format',
+        self::TYPE_AUTHENTICATION_FAILED => 'Authentication failed',
     ];
 
-    /** Tableau des infos supplémentaires à inclure dans la réponse correspondant à cette exception */
+    /** Array of extra data that will be included in the response */
     private $extraData = [];
 
     private $type;
@@ -46,10 +45,9 @@ class ApiException extends HttpException
 
     /**
      * {@inheritDoc}
-     * @param int $statusCode Statut HTTP correspondant à l'erreur
-     * @param string $type Type de l'erreur - Doit être une des constantes définies dans cette classe - Le titre est
-     *                     complété automatiquement
-     * @param string $detail Message décrivant cette erreur spécifique
+     * @param int $statusCode HTTP status code for that error
+     * @param string $type Error type - Must be one of the constants defined in this class - The corresponding title will be picked automatically
+     * @param string $detail Message that describes the error more specifically
      */
     public function __construct(
         int $statusCode = 500,
@@ -62,11 +60,11 @@ class ApiException extends HttpException
             $this->type = self::TYPE_DEFAULT;
             $this->title = isset(Response::$statusTexts[$statusCode])
                 ? Response::$statusTexts[$statusCode]
-                : 'Statut HTTP inconnu';
+                : 'Unknown HTTP status code';
         } else {
             $this->type = $type;
             if (!isset(self::$titles[$type])) {
-                throw new \InvalidArgumentException("Aucun titre prévu pour le type d'erreur \"{$type}\"");
+                throw new \InvalidArgumentException("No title for that error type \"{$type}\"");
             }
             $this->title = self::$titles[$type];
         }
@@ -80,9 +78,9 @@ class ApiException extends HttpException
     }
 
     /**
-     * Ajoute des infos supplémentaires à l'objet d'erreur par clé/valeur.
-     * @param string $name Le nom de l'info à ajouter
-     * @param mixed  $value Sa valeur - Tout type sérialisable en JSON nativement
+     * Add additional property to the error by key/value.
+     * @param string $name Name/key of the additional property
+     * @param mixed  $value Its value - Anything that may be serialized natively to JSON
      * @return self
      */
     public function set(string $name, $value): self
@@ -92,8 +90,8 @@ class ApiException extends HttpException
     }
     
     /**
-     * Renvoie les infos supplémentaires de l'objet d'erreur.
-     * @param string $name Le nom de l'info à retrouver
+     * Return an extra property
+     * @param string $name Name of the property
      * @return mixed
      */
     public function get(string $name)
@@ -110,8 +108,7 @@ class ApiException extends HttpException
     }
 
     /**
-     * Retourne la représentation sous forme d'array de cette exception, utilisée pour construire la réponse retournée
-     * à l'utilisateur.
+     * Return the JSON representation (array) of the exception that will be used in the response.
      * @return array
      */
     public function toArray(): array

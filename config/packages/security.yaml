@@ -14,11 +14,11 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js|doc)/
             security: false
-        # La doc n'a pas besoin d'être protégée par défaut
+        # API doc is public so ot does not need protection
         doc:
             pattern: ^/doc
             security: false
-        # Firewall pour l'authentification
+        # Auth-dedicated firewall using LexkJWTAuthenticationBundle
         auth:
             pattern: ^/auth
             stateless: true
@@ -29,7 +29,7 @@ security:
                 check_path: auth_login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        # Firewall principal
+        # Main firewall for protected routes (all the rest)
         main:
             anonymous: false
             stateless: true

@@ -8,8 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 
 /**
- * Fixture de base avec méthodes pour gérer les références
- * et la génération via Faker.
+ * Base fixture that contains base methods to handle references and random generation of large datasets using Faker.
  */
 abstract class BaseFixture extends Fixture
 {
@@ -28,7 +27,7 @@ abstract class BaseFixture extends Fixture
     }
 
     /**
-     * Fonction à redéfinir dans toutes les fixtures filles pour décrire comment sont chargées les données d'une entité donnée.
+     * Function that must be redefined in every child class to describe how data should be loaded.
      *
      * @param ObjectManager $manager
      * @return void
@@ -41,11 +40,11 @@ abstract class BaseFixture extends Fixture
     }
 
     /**
-     * Permet de créer un grand nombre d'objets d'une même entité en utilisant Faker.
+     * Create many objects of the same class/entity using Faker.
      *
      * @param string $className
      * @param integer $count
-     * @param callable $factory Closure qui sera appelée à chaque itération pour générer UNE instance de l'entité
+     * @param callable $factory Closure called for each iteration to generate ONE instance of the entity
      * @return void
      */
     protected function createMany(string $className, int $count, callable $factory)
@@ -55,15 +54,15 @@ abstract class BaseFixture extends Fixture
             $factory($entity, $i);
 
             $this->manager->persist($entity);
-            // On stocke une référence pour plus tard en tant que App\Entity\ClassName_#COUNT#
+            // Store a reference for later use as "App\Entity\ClassName_#COUNT#"
             $this->addCustomReference($entity);
         }
     }
 
     /**
-     * Ajoute une référence à un objet et garde en mémoire le nom de toutes les références disponibles pour chaque classe.
+     * Add a reference to an object and memorize the name of every available references for each class.
      * 
-     * Permettra plus tard de retrouver une référence spécifique ou d'obtenir une référence aléatoire d'une classe.
+     * This will allow us to retrieve a specific reference or to get a random reference for a class.
      *
      * @param mixed $object
      * @return void
@@ -83,7 +82,7 @@ abstract class BaseFixture extends Fixture
     }
 
     /**
-     * Retourne une référence aléatoire à un objet d'une classe donnée.
+     * Return a reference to an object of a given class.
      *
      * @param string $className
      * @return void
@@ -99,7 +98,7 @@ abstract class BaseFixture extends Fixture
     }
 
     /**
-     * Compte le nombre de références déjà  enregistrées pour une classe données.
+     * COunt the number of recorded refereneces to a given class.
      *
      * @param string $className
      * @return integer
@@ -113,7 +112,7 @@ abstract class BaseFixture extends Fixture
     }
 
     /**
-     * Retourne tous les noms des références à une classe donnée.
+     * Return all the reference names recorded for a given class.
      *
      * @param string $className
      * @return array

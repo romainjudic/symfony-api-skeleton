@@ -5,10 +5,9 @@ namespace App\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Exception de base levée quand un processus de validation échoué (formulaire, paramètre de requête, ...).
- *
- * Ajoute un objet "errors" à l'objet qui contient toutes les infos nécessaires pour tracer la source de l'erreur de
- * validation. Par exemple, une Map associant à chaque champ d'un formulaire les messages d'erreur associés.
+ * Base exception thrown when a validation process fails (form, request parameter, etc...).
+ * 
+ * Adds an "errors" property that holds information about what caused the validation error.
  */
 class ValidationException extends ApiException
 {

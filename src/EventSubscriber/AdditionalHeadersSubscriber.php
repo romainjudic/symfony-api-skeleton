@@ -6,16 +6,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 /**
- * Subscriber destine a ajouter des headers personnalises aux reponses API.
+ * Subscriber that adds custom headers to API responses.
  */
 class AdditionalHeadersSubscriber implements EventSubscriberInterface
 {
     /**
-     * Ajoute un header 'Vary' afin de preciser aux clients (navigateurs) de
-     * ne pas mettre en cache les requetes provenant d'origines differentes.
+     * Add a "Vary" header to tell clients (browsers) not to cache
+     * requests that come from different origins.
      *
-     * Facilite le developpement de clients sur differents environnements appelant
-     * la meme instance de l'API.
+     * Makes development easier for clients that use different environments of the same API.
      *
      * @param ResponseEvent $event
      * @return void

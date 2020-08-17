@@ -7,9 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Classe représentant les utilisateurs pouvant s'authentifier et utiliser l'application.
+ * Entity that represents users that can authenticate and use the app.
  * 
- * Note : on nomme la table "app_user" pour éviter les conflits de nom avec "user" sur certains SGBD.
+ * Notice: we name a table named "app_user" instead of "user" to avoid naming conflicts.
  * 
  * @ORM\Table(name="app_user")
  * @ORM\Entity(repositoryClass=UserRepository::class)

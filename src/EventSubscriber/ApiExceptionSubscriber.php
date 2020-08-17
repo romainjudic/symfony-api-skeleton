@@ -11,8 +11,8 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use \Throwable;
 
 /**
- * Récupère toutes les exceptions qui n'ont pas été attrapées et les convertit en une réponse JSON correctement
- * formatée.
+ * Catches all the exceptions that were not catched before and converts them
+ * to a correctly formatted JSON response.
  */
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
@@ -28,8 +28,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Convertit toute exception qui n'est pas du type ApiException en ApiException pour pouvoir retourner une réponse
-     * correctement formatée.
+     * Convert all the exceptions to ApiExceptions (unless they already are of this type).
      * @param ExceptionEvent $event
      */
     public function convertUnexpectedExceptionToApiException(ExceptionEvent $event): void
@@ -52,14 +51,14 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Crée une réponse adaptée à partir d'une ApiException
+     * Create a well formatted response from an ApiException.
      * @param ExceptionEvent $event
      */
     public function createResponseFromApiException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
 
-        // Attention : on ne traite l'exception que s'il s'agit d'une ApiException (donc créée par nos soins)
+        // Warning: only process ApiException (the ones we are sure that we created)
         if ($exception instanceof ApiException) {
             $response = new JsonResponse($exception->toArray(), $exception->getStatusCode());
             $event->setResponse($response);
@@ -67,18 +66,18 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Retourne le statut HTTP correspondant à une exception donnée. Par défaut on considèrera que l'on a une 500.
+     * Return the right HTTP code to use for a given exception. Defaults to 500.
      * @param Throwable $e
      * @return int
      */
     private function guessStatusCode(\Throwable $e): int
     {
-        // Les exceptions implémentant HttpExceptionInterface ont déjà une référence à un statut HTTP
+        // Exceptions that implement HttpException already have an HTTP status
         if ($e instanceof HttpExceptionInterface) {
             return $e->getStatusCode();
         }
 
-        // Par défaut on considère qu'il s'agit d'une 500 (l'exception n'est pas gérée)
+        // Defaults to 500 when the status can not be guessed
         return Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 }

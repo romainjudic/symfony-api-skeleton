@@ -12,8 +12,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Contrôleur dont doivent étendre tous les contrôleurs de l'API afin d'avoir
- * toutes les méthodes utiles pour traiter les requêtes courantes.
+ * Parent controller for all API controllers.
+ * Provides utility methods for API purposes.
+ * 
+ * All other controllers must inherit this class.
  */
 abstract class BaseController extends AbstractController
 {
@@ -23,9 +25,7 @@ abstract class BaseController extends AbstractController
     protected $request;
 
     /**
-     * Injection par setter, appelée automatiquement à l'instanciation.
-     *
-     * Permet aux classes filles d'avoir un constructeur plus simple.
+     * Setter injection. Automatically called when instanciated.
      * 
      * @required
      * @param RequestStack
@@ -35,9 +35,9 @@ abstract class BaseController extends AbstractController
     }
 
     /**
-     * Retourne le contenu (body) de la requête en cours.
+     * Return the current request's body.
      *
-     * @return array|null Un array ou null si aucun body n'est précisé
+     * @return array|null An array or NULL if no body is specified
      */
     protected function getRequestData(): ?array
     {
@@ -45,11 +45,11 @@ abstract class BaseController extends AbstractController
     }
 
     /**
-     * Crée et retourne une réponse API en JSON pour les données passées.
+     * Create and return an JSON response for the given data.
      * 
-     * @param mixed $data Les données à envoyer dans la réponse JSON
-     * @param int $status Le statut HTTP de la réponse
-     * @param array $serializationContext Un éventuel contexte de sérialisation pour contrôler le processus de sérialisation
+     * @param mixed $data Data to send in the JSON response
+     * @param int $status HTTP status code for the response
+     * @param array $serializationContext Optional serialization context to controle the serialization process
      * @return Response
      */
     protected function createApiResponse($data, $status = 200, $serializationContext = []): Response
@@ -62,7 +62,7 @@ abstract class BaseController extends AbstractController
     }
 
     /**
-     * Retourne l'utlisateur authentifié avec le bon typage.
+     * Return the authenticatd user with the correct type.
      * 
      * @return User
      */
@@ -70,19 +70,20 @@ abstract class BaseController extends AbstractController
     {
         $user = $this->getUser();
         if (!($user instanceof User)) {
-            throw new \LogicException("Impossible d'accéder à un utilisateur de type App\Entity\User dans une zone non sécurisée.");
+            $userClass = User::class;
+            throw new \LogicException("Cannot access a user of type $userClass outside of the main firewal.");
         }
 
         return $user;
     }
 
     /**
-     * Soumet les données du body de la requête à un formulaire Symfony. Gère la validation.
+     * Submit the request body to a Symfony form and handle validation.
      * 
-     * @param FormInterface $form         Le formulaire à utiliser
-     * @param bool|null $clearMissing     Indique si les champs non soumis doivent être vidés (null) -
-     *                                    Par défaut true pour tous les verbes autres que PATCH
-     * @param array|null $preExistingData Données à utiliser, si les données ont déjà été extraites du body par exemple
+     * @param FormInterface $form         The form to use
+     * @param bool|null $clearMissing     Indicate whether the missing fields should be clear from the object (NULL) -
+    *                                     Defaults to true for all HTTP verbs but PATCH
+     * @param array|null $preExistingData Optional data that should be used instead of the request body
      */
     protected function processForm(FormInterface $form, ?bool $clearMissing = null, ?array $preExistingData = null): void
     {
@@ -94,8 +95,8 @@ abstract class BaseController extends AbstractController
             throw new ApiException(Response::HTTP_BAD_REQUEST, ApiException::TYPE_INVALID_REQUEST_FORMAT);
         }
 
-        // Si un champ est manquant, il est vidé (null) sauf avec le verbe PATCH
-        // Si une valeur $clearMissing est passée, ce comportement peut être surchargé
+        // Clear missing fields (NULL), unless the HTTP verb is PATCH
+        // This behavior can be overriden by spending a $clearMissing manually
         $actuallyClearMissing = null !== $clearMissing ? $clearMissing : ($this->request->getMethod() != 'PATCH');
         $form->submit($data, $actuallyClearMissing);
 

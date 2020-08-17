@@ -5,8 +5,8 @@ namespace App\Exception;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Exception levée quand la validation d'un formulaire échoue.
- * L'objet "errors" ajouté à la réponse contient une Map (récursive) des erreurs associées à chaque champ du formulaire.
+ * Exception thrown when a form validation fails.
+ * An "errors" property is added to the ApiException and holds a (recursive) Map of the validation errors of each form field.
  */
 class FormValidationException extends ValidationException
 {
@@ -16,7 +16,7 @@ class FormValidationException extends ValidationException
     }
 
     /**
-     * Retourne la Map des erreurs extraites de l'objet de formulaire FormInterface.
+     * Return the validation error map extracted from a FormInterface instance.
      * @param FormInterface $form Le formulaire à parcourir
      * @return array
      */
