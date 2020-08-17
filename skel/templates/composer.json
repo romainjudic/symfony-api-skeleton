@@ -1,21 +1,7 @@
 {
-    "description": "Skeleton for a minimal optimized installation of a Symfony app for API development.",
-    "name": "romainjudic/symfony-api-skeleton",
-    "type": "project",
+    "name": "{{ projectName }}",
     "license": "proprietary",
-    "authors": [
-        {
-            "name": "Romain Judic",
-            "email": "judic.romain@gmail.com",
-            "role": "Maintainer"
-        }
-    ],
-    "keywords": [
-        "symfony",
-        "api",
-        "skeleton",
-        "create-project"
-    ],
+    "keywords": [],
     "require": {
         "php": "^7.2.5",
         "ext-ctype": "*",
@@ -87,8 +73,15 @@
         "symfony/polyfill-php56": "*"
     },
     "scripts": {
-        "post-create-project-cmd": [
-            "skel/scripts/post_create_project.php"
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
         ]
     },
     "conflict": {
