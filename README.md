@@ -45,9 +45,7 @@ You can create your application using Composer's `create-project` command: it wi
 composer create-project romainjudic/symfony-api-skeleton your-app-name -sdev
 ```
 
-Notice: as you can see we use the "-sdev" flag because the project does not have an official stable release. This just tells Composer that it is safe to use the latest version of this repository.
-
-Notice: later the project will be uploaded to [Packagist](https://packagist.org/) to make it easier.
+Notice: as you can see we use the "-sdev" flag because the project does not have an official stable release. This just tells Composer that it is safe to use the latest version of this repository. The project has no proper version yet, but this is coming soon.
 
 
 ### Create your local envfile
