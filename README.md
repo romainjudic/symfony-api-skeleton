@@ -77,11 +77,11 @@ You may change the keys location in the ".env" file with the "JWT_SECRET_KEY" an
 You **must** set your passphrase value in the "JWT_PASSPHRASE" variable of the ".env.local" file.
 
 
-### Clear the cache
+### Finish Symfony installation
 
-Now that everything is configured, you can clear the cache:
+Now that everything is configured, you can finish the Smyfony installation (clears the cache and installs assets):
 ```bash
-php bin/console c:c
+composer run auto-scripts
 ```
 
 
