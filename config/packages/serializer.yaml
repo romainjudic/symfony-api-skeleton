@@ -8,6 +8,7 @@ services:
     get_set_method_normalizer:
         class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
         tags: [serializer.normalizer]
+        arguments:
             $classMetadataFactory: '@serializer.mapping.class_metadata_factory'
             $nameConverter: '@serializer.name_converter.metadata_aware'
             # Use property info to guess complex types (de)normalization
