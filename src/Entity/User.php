@@ -39,6 +39,16 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * Implementation required by the new UserInterface
+     *
+     * @return int|null
+     */
+    public function getUserIdentifier(): ?int
+    {
+        return $this->id;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
