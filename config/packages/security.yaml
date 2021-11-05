@@ -10,6 +10,9 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+    
+    enable_authenticator_manager: true
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js|doc)/
@@ -22,11 +25,10 @@ security:
         auth:
             pattern: ^/auth
             stateless: true
-            anonymous: true
             json_login:
                 username_path: email
                 password_path: password
-                check_path: auth_login
+                check_path: /auth/login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         # Main firewall for protected routes (all the rest)
@@ -35,9 +37,7 @@ security:
             stateless: true
             lazy: true
             provider: main_user_provider
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            jwt: ~
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
