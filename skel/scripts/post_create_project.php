@@ -63,6 +63,8 @@ foreach (glob('skel/templates/*') as $template) {
 // Remove all files that are only related to the skeleton
 echo "Removing templates and skeleton related files...\n";
 delTree('skel');
+// Start the new project without composer.lock to install latest package versions
+unlink("composer.lock");
 
 echo "\033[0;32mPost create project script done...\n";
 
